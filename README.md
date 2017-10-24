@@ -5,4 +5,4 @@ The Amazing Bamazon is a CLI App allowing users to purchase items from a databas
 
 ![](https://media.giphy.com/media/hnl83xVQxpqJG/giphy.gif)
 
-User Workflow Screenshots:
+**User Workflow Screenshots:**
