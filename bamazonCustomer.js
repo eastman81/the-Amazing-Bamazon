@@ -1,6 +1,7 @@
 // My NPM sources 
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+var Table = require('cli-table');
 
 // Connection to database
 var connection = mysql.createConnection({
@@ -20,24 +21,32 @@ connection.connect(function(error) {
 // Function to show all avaiable products
 function showProducts() {
 	console.log('Below are our avaiable items:');
-	console.log('------------------------------------------------');
-	console.log('#' + ' | ' + 'Product' + ' | ' + 'Department' + ' | ' + 'Price' + ' | ' + 'Quantity');
-	console.log('------------------------------------------------');
+
 	connection.query('SELECT * FROM products', function(error, results) {
 		if (error) throw error;
 
-		// use the full array of results, and then call what I need from it when I am in my functions later down
+		// make a full array of results, and then call what I need from it when I am in my functions later down
 		var itemsAvailable = results;
-		
-		// loop through products
+
+		// Making a table to display products in node
+		var table = new Table({
+		    head: ['#', 'Product', 'Department', 'Price', 'Quantity'], 
+		    colWidths: [5, 22, 15, 10, 10]
+		});
+
 		for (i = 0; i < results.length; i++) {
-			console.log(results[i].item_id +
-				' | ' + results[i].product_name +
-				' | ' + results[i].department_name +
-				' | ' + results[i].price +
-				' | ' + results[i].stock_quantity);
+			table.push(
+				[
+					results[i].item_id, 
+					results[i].product_name, 
+					results[i].department_name, 
+					results[i].price, 
+					results[i].stock_quantity
+				]
+			);
 		}
-		console.log('------------------------------------------------');
+
+		console.log(table.toString());
 
 		// function for purchasing products
 		buyProduct(itemsAvailable);
