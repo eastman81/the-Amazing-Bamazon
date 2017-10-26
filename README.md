@@ -9,10 +9,10 @@ The Amazing Bamazon is a CLI App allowing users to purchase items from a databas
 
 **Customer Facing**
 
-![](./assets/images/productDisplay)
+![](https://user-images.githubusercontent.com/24595535/32075871-b23800d6-ba63-11e7-9bcf-c11e2f492722.png)
 
-![](./assets/images/purchasing)
+![](https://user-images.githubusercontent.com/24595535/32075872-b24655fa-ba63-11e7-82fe-1d0af8800411.png)
 
-![](./assets/images/whatDoNext)
+![](https://user-images.githubusercontent.com/24595535/32075873-b2576818-ba63-11e7-8b7a-2315839ea769.png)
 
 **Manager Facing**
