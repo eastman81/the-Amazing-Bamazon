@@ -23,7 +23,7 @@ function showProducts() {
 	console.log('------------------------------------------------');
 	console.log('#' + ' | ' + 'Product' + ' | ' + 'Department' + ' | ' + 'Price' + ' | ' + 'Quantity');
 	console.log('------------------------------------------------');
-	connection.query('SELECT * FROM PRODUCTS', function(error, results) {
+	connection.query('SELECT * FROM products', function(error, results) {
 		if (error) throw error;
 
 		// use the full array of results, and then call what I need from it when I am in my functions later down
@@ -44,6 +44,7 @@ function showProducts() {
 	});
 }
 
+// Purchasing function
 function buyProduct(itemsAvailable) {
 	var itemNumber;
 
@@ -56,7 +57,6 @@ function buyProduct(itemsAvailable) {
 				itemNumber = input;
 
 				if (input <= itemsAvailable.length) {
-					// console.log('\nNice selection!');
 					return true;
 				} else {
 					console.log('\nPlease enter a valid Product Number!')
@@ -67,7 +67,6 @@ function buyProduct(itemsAvailable) {
 			type: 'input',
 			name: 'howMany',
 			message: 'How many would you like to purchase?',
-			// make a new validate with itemsAvailable .stock_quantity. Will have to define a new i
 			validate: function(input) {
 				// find the quantity of the requested item
 				for (i = 0; i < itemsAvailable.length; i++) {
@@ -91,7 +90,7 @@ function buyProduct(itemsAvailable) {
 
 			console.log("Congrats! You just bought " + numberPurchased + " of " + itemName + "!");
 
-			// Subtract number purchased from stock
+			// Subtract number purchased from stock, find the total price for customer
 			var updateStock = itemQuantity - numberPurchased;
 			var customerPrice = itemPrice * numberPurchased;
 
@@ -115,6 +114,7 @@ function buyProduct(itemsAvailable) {
 		});
 }
 
+// See what the customer wants to do next
 function whatNext() {
 	inquirer.prompt([
 		{
@@ -132,4 +132,3 @@ function whatNext() {
 			}
 		});
 }
-
