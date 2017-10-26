@@ -26,8 +26,8 @@ function showProducts() {
 	connection.query('SELECT * FROM PRODUCTS', function(error, results) {
 		if (error) throw error;
 
-		var itemsAvailable = results.length;
-		var itemsLeft = results[itemRequested].stock_quantity;
+		// use the full array of results, and then call what I need from it when I am in my functions later down
+		var itemsAvailable = results;
 		
 		// loop through products
 		for (i = 0; i < results.length; i++) {
@@ -41,25 +41,22 @@ function showProducts() {
 
 		// function for purchasing products
 		buyProduct(itemsAvailable);
-
-		// end connection
-		connection.end();
 	});
 }
 
-function buyProduct(itemsAvailable, itemsLeft) {
-	var itemRequested;
+function buyProduct(itemsAvailable) {
+	var itemNumber;
 
 	inquirer.prompt([
 		{
 			type: 'input',
 			name: 'buy',
 			message: 'Which product would you like to buy? Please enter the Product Number:',
-			validate: function(input1) {
-				var itemRequested = input1;
+			validate: function(input) {
+				itemNumber = input;
 
-				if (input1 <= itemsAvailable) {
-					console.log('\nNice selection!');
+				if (input <= itemsAvailable.length) {
+					// console.log('\nNice selection!');
 					return true;
 				} else {
 					console.log('\nPlease enter a valid Product Number!')
@@ -70,18 +67,69 @@ function buyProduct(itemsAvailable, itemsLeft) {
 			type: 'input',
 			name: 'howMany',
 			message: 'How many would you like to purchase?',
+			// make a new validate with itemsAvailable .stock_quantity. Will have to define a new i
 			validate: function(input) {
-				if (input <= itemsLeft) {
+				// find the quantity of the requested item
+				for (i = 0; i < itemsAvailable.length; i++) {
+					var itemName = itemsAvailable[itemNumber -1].product_name;
+					var itemQuantity = itemsAvailable[itemNumber -1].stock_quantity;
+				}
+
+				if (input <= itemQuantity) {
 					return true;
 				} else {
-					console.log('\nThere are not that many avaiable. Please order a smaller amount.')
+					console.log("\nThere are not enough of that item avaiable. Please select a smaller number to purchase");
 				}
 			}
 		}
 		]).then(function(answer) {
-			// console.log(answer);
+			var itemName = itemsAvailable[itemNumber -1].product_name;
+			var itemQuantity = itemsAvailable[itemNumber -1].stock_quantity;
+			var itemPrice = itemsAvailable[itemNumber -1].price;
+			var itemId = answer.buy;
+			var numberPurchased = answer.howMany;
+
+			console.log("Congrats! You just bought " + numberPurchased + " of " + itemName + "!");
+
+			// Subtract number purchased from stock
+			var updateStock = itemQuantity - numberPurchased;
+			var customerPrice = itemPrice * numberPurchased;
+
+			connection.query(
+				'UPDATE products SET ? WHERE ?',
+				[
+					{
+						stock_quantity: updateStock
+					},
+					{
+						item_id: itemId
+					}
+				],
+				function(error, results) {
+					if (error) throw error;
+					console.log('There are ' + updateStock + ' ' + itemName + 's remaining.');
+					console.log('Total cost: $' + customerPrice);
+
+					whatNext();
+				});
 		});
 }
 
-
+function whatNext() {
+	inquirer.prompt([
+		{
+			type: 'list',
+			name: 'next',
+			message: 'What would you like to do next?',
+			choices: ['Purchase another item', 'Exit Bamazon']
+		}
+		]).then(function(answer) {
+			if (answer.next === 'Purchase another item') {
+				showProducts();
+			} else {
+				// End connection
+				connection.end();
+			}
+		});
+}
 
